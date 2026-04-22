@@ -37,7 +37,10 @@ class Settings(BaseSettings):
     database_url: str
     rabbitmq_url: str
     port: int = 3006
-    similarity_threshold: float = 0.55
+    embedding_model_name: str = "intfloat/multilingual-e5-small"
+    similarity_threshold: float = 0.42
+    embedding_chunk_size: int = 800
+    embedding_chunk_overlap: int = 120
     allowed_roles: list[str] = ["MEDICO", "ENFERMERO", "ADMIN"]
 
     @field_validator("database_url", mode="before")

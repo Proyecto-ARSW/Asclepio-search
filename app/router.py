@@ -38,7 +38,7 @@ async def search(
     session: AsyncSession = Depends(get_session),
 ):
     hospital_id = user.get("hospitalId")
-    query_embedding = encode(q)
+     query_embedding = encode(q, mode="query")
 
     # asyncpg no tiene codec para el tipo vector — inferiría el parámetro como
     # TEXT y fallaría con una lista Python. Serializar al formato literal de
