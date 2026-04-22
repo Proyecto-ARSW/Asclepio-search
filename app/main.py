@@ -7,11 +7,11 @@ import logging
 import sys
 
 from app.config import settings
+from app.config import redact_secret_url
 from app.router import router
 from app.database import engine
 from app.models import Base
 from app.consumer import start_consumer
-from app.indexer import load_model
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,7 +32,12 @@ async def init_db():
             await conn.run_sync(Base.metadata.create_all)
         logger.info("Database initialized successfully")
     except Exception as e:
-        logger.error(f"Failed to initialize database: {e}")
+        logger.error(
+            "Failed to initialize database using %s: %s",
+            redact_secret_url(settings.database_url),
+            e,
+            exc_info=True,
+        )
         raise
 
 
@@ -40,19 +45,18 @@ async def init_db():
 async def lifespan(app: FastAPI):
     logger.info("=== Starting asclepio-search ===")
     logger.info(f"Port: {settings.port}")
-    logger.info(f"Database URL: {settings.database_url[:50]}...")
+    logger.info("Database URL: %s", redact_secret_url(settings.database_url))
     logger.info(f"RabbitMQ URL: {settings.rabbitmq_url[:50]}...")
 
     try:
         await init_db()
-        load_model()
-        logger.info("SentenceTransformer model loaded")
+        logger.info("SentenceTransformer model will be lazy-loaded on first use")
 
         global consumer_task
         consumer_task = asyncio.create_task(start_consumer())
         logger.info("RabbitMQ consumer started")
     except Exception as e:
-        logger.error(f"Failed to start asclepio-search: {e}")
+        logger.error(f"Failed to start asclepio-search: {e}", exc_info=True)
         raise
 
     yield

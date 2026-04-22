@@ -1,11 +1,12 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 import logging
-from app.config import settings
+from app.config import settings, redact_secret_url
 
 logger = logging.getLogger(__name__)
 
 try:
+    logger.info("Creating DB engine using %s", redact_secret_url(settings.database_url))
     engine = create_async_engine(
         settings.database_url,
         echo=False,
@@ -15,7 +16,12 @@ try:
     )
     logger.info("Database engine created successfully")
 except Exception as e:
-    logger.error(f"Failed to create database engine: {e}")
+    logger.error(
+        "Failed to create database engine with %s: %s",
+        redact_secret_url(settings.database_url),
+        e,
+        exc_info=True,
+    )
     raise
 
 AsyncSessionLocal = sessionmaker(

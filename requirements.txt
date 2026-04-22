@@ -19,6 +19,7 @@ aio-pika==9.4.1
 
 # AI/ML
 sentence-transformers==2.7.0
+psycopg2-binary
 
 # Reduce uvicorn extras (we don't need all of standard)
 # Alternative: use uvicorn==0.30.0 without [standard] if you don't need all extras
