@@ -1,0 +1,24 @@
+# Core Web Framework
+fastapi==0.115.0
+uvicorn==0.30.0
+
+# Configuration & Validation
+pydantic-settings==2.3.0
+pydantic==2.8.0
+
+# Authentication
+PyJWT==2.8.0
+
+# Database
+sqlalchemy[asyncio]==2.0.31
+asyncpg==0.29.0
+pgvector==0.3.2
+
+# Message Queue
+aio-pika==9.4.1
+
+# AI/ML
+sentence-transformers==2.7.0
+
+# Reduce uvicorn extras (we don't need all of standard)
+# Alternative: use uvicorn==0.30.0 without [standard] if you don't need all extras
